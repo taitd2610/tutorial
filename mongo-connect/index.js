@@ -5,7 +5,7 @@ var mongodb = require("mongodb");
 var mongoClient = mongodb.MongoClient;
 
 // Connection URL. Địa chỉ mongodb server được chạy
-var url = "mongodb://localhost:27017/testdb";
+var url = "mongodb://localhost:27017/";
 
 // Connect tới server
 mongoClient.connect(url, function (err, db) {
@@ -16,26 +16,40 @@ mongoClient.connect(url, function (err, db) {
 
   // Làm cái gì đó ở đây với database :D
 
-  // Tạo user
-  var user1 = {
-    name: "taitd",
-    age: 42,
-    roles: ["admin", "moderator", "user"],
-  };
+  // Tạo db
+  var dbo = db.db("mydb");
+  // Tạo collection
+  dbo.createCollection("customers", function (err, res) {
+    if (err) throw err;
+    console.log("Collection created!");
+  });
 
-  var user2 = {
-    name: "trangttq",
-    age: 22,
-    roles: ["user"],
-  };
+  dbo.createCollection("employees", function (err, res) {
+    if (err) throw err;
+    console.log("Collection created!");
+  });
+
+  // Tạo user
+  var users = [
+    {
+      name: "taitd",
+      age: 42,
+      roles: ["admin", "moderator", "user"],
+    },
+    {
+      name: "trangttq",
+      age: 22,
+      roles: ["user"],
+    },
+  ];
 
   // Thêm mới dữ liệu trong collection của database
-  collection.insert([user1, user2], function (err, result) {
+  dbo.collection("employees").insertMany(users, function (err, result) {
     if (err) {
       console.log(err);
     } else {
       console.log(
-        'Inserted %d documents into the "users" collection. The documents inserted with "_id" are:',
+        'Inserted documents into the "employees" collection. The documents inserted with "_id" are:',
         result.length,
         result
       );
